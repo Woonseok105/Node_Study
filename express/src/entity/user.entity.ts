@@ -9,6 +9,9 @@ export class UserEntity {
     @Column('varchar', { nullable: false, length: 30 })
     accountId: string;
 
+    @Column('varchar', { nullable: false, length: 30 })
+    password: string
+
     @Column('varchar', { nullable: false, length: 5 })
     name: string;
 }
