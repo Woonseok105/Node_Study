@@ -1,4 +1,4 @@
-import { BusinessLogic } from '../shared/BusinessLogicInterface';
+import { BusinessLogic } from '../util/BusinessLogicInterface';
 import { UserService } from '../service/user.service';
 import { UserRepository } from '../entity/repository/user.repository';
 
@@ -15,5 +15,10 @@ export class UserController {
     public getUser: BusinessLogic = async (req, res, next) => {
         const response = await this.userService.getUserId(req.body.accountId);
         res.status(200).json(response);
+    };
+
+    public signIn: BusinessLogic = async (req, res, next) => {
+        const token = await this.userService.signIn(req.body.accountId, req.body.password);
+        res.status(201).json({token});
     };
 }

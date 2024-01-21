@@ -1,7 +1,8 @@
 import { userRepository } from '../app';
-import { ConflictException } from '../exception/exception';
+import { ConflictException, UnauthorizedException } from '../exception/exception';
 import { UserResponse } from '../controller/dto/user.response';
 import { UserRepository } from '../entity/repository/user.repository';
+import { provideToken } from '../util/jwt.util';
 
 export class UserService {
     constructor(
@@ -27,5 +28,13 @@ export class UserService {
             accountId: user.accountId,
             name: user.name
         };
+    }
+
+    public async signIn(accountId: string, password: string) {
+        const user = await this.userRepository.findById(accountId);
+        if (user.password !== password)
+            throw new UnauthorizedException('Invalid Password');
+
+        return provideToken(accountId, 'access');
     }
 }

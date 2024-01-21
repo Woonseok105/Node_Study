@@ -11,4 +11,6 @@ export const userServiceRouter = (app: Router) => {
     router.post('/register', errorHandler(userController.signup));
 
     router.get('/id', errorHandler(userController.getUser));
+
+    router.post('/auth', errorHandler(userController.signIn))
 };

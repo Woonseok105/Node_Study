@@ -9,6 +9,12 @@ export class CustomException extends Error {
     }
 }
 
+export class UnauthorizedException extends CustomException {
+    constructor(message: string) {
+        super(401, message);
+    }
+}
+
 export class NotFoundException extends CustomException {
     constructor(message: string) {
         super(404, message);

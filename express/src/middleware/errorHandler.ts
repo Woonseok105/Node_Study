@@ -1,4 +1,4 @@
-import { BusinessLogic } from '../shared/BusinessLogicInterface';
+import { BusinessLogic } from '../util/BusinessLogicInterface';
 
 export const errorHandler = (controller: BusinessLogic): BusinessLogic => {
     return async (req, res, next) => {
