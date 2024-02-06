@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { FeedModule } from './domain/feed/feed.module';
+import { TypeormConfigModule } from './global/config/typeorm.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        FeedModule,
+        TypeormConfigModule,
+        ConfigModule.forRoot({ isGlobal: true })
+    ]
 })
-export class AppModule {}
+export class AppModule {
+}
