@@ -6,15 +6,17 @@ import {
     Param,
     ParseIntPipe,
     Patch,
-    Post,
+    Post, UseGuards,
     UsePipes,
     ValidationPipe
 } from '@nestjs/common';
 import { FeedUseCase } from '../usecase/feed.usecase';
 import { CreateFeedRequest, UpdateFeedRequest } from './dto/request/feed.request.dto';
 import { FeedDetailResponse } from './dto/response/feed.response.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('feed')
+@UseGuards(AuthGuard())
 export class FeedController {
     constructor(
         private feedUseCase: FeedUseCase
