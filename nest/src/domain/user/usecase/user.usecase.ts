@@ -50,7 +50,7 @@ export class UserUseCase {
             throw new UnauthorizedException('Password Mismatch Exception');
         }
 
-        const payload = { user: user.accountId };
+        const payload = { username: user.accountId };
         return { accessToken: await this.jwtService.signAsync(payload) };
     }
 }
