@@ -1,10 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from '../../user/domain/user.entity';
 
 @Entity()
 export class FeedEntity {
-    constructor(title: string, content: string) {
+    constructor(title: string, content: string, user: UserEntity) {
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
     @PrimaryGeneratedColumn()
@@ -15,4 +17,8 @@ export class FeedEntity {
 
     @Column({ type: 'varchar', length: 100, nullable: false })
     content: string;
+
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'user_id' })
+    user: UserEntity;
 }

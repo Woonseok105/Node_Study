@@ -14,6 +14,8 @@ import { FeedUseCase } from '../usecase/feed.usecase';
 import { CreateFeedRequest, UpdateFeedRequest } from './dto/request/feed.request.dto';
 import { FeedDetailResponse } from './dto/response/feed.response.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from '../../../global/decorator/current-user.decorator';
+import { UserEntity } from '../../user/domain/user.entity';
 
 @Controller('feed')
 @UseGuards(AuthGuard())
@@ -25,8 +27,9 @@ export class FeedController {
 
     @Post()
     @UsePipes(ValidationPipe)
-    createFeed(@Body() request: CreateFeedRequest) {
-        this.feedUseCase.createFeed(request);
+    createFeed(@Body() request: CreateFeedRequest, @CurrentUser() user: UserEntity) {
+        console.log(user);
+        return this.feedUseCase.createFeed(request, user);
     }
 
     @Get('/:id')
@@ -35,12 +38,17 @@ export class FeedController {
     }
 
     @Delete('/:id')
-    deleteFeed(@Param('id', ParseIntPipe) id: number) {
-        return this.feedUseCase.deleteFeed(id);
+    deleteFeed(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: UserEntity) {
+        return this.feedUseCase.deleteFeed(id, user);
     }
 
     @Patch('/:id')
     updateFeed(@Param('id', ParseIntPipe) id: number, @Body() request: UpdateFeedRequest) {
         return this.feedUseCase.updateFeed(id, request);
+    }
+
+    @Get()
+    getMyFeed(@CurrentUser() user: UserEntity): Promise<FeedDetailResponse[]> {
+        return this.feedUseCase.getMyFeed(user);
     }
 }
