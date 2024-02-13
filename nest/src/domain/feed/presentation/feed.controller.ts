@@ -2,7 +2,7 @@ import {
     Body,
     Controller,
     Delete,
-    Get,
+    Get, Logger,
     Param,
     ParseIntPipe,
     Patch,
@@ -20,6 +20,7 @@ import { UserEntity } from '../../user/domain/user.entity';
 @Controller('feed')
 @UseGuards(AuthGuard())
 export class FeedController {
+    private logger = new Logger('feed');
     constructor(
         private feedUseCase: FeedUseCase
     ) {
@@ -49,6 +50,7 @@ export class FeedController {
 
     @Get()
     getMyFeed(@CurrentUser() user: UserEntity): Promise<FeedDetailResponse[]> {
+        this.logger.verbose(`User ${user.accountId} trying to get all boards`);
         return this.feedUseCase.getMyFeed(user);
     }
 }
