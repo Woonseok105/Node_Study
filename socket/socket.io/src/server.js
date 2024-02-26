@@ -1,11 +1,40 @@
 import http from 'http';
 import { Server } from 'socket.io';
+import { instrument } from '@socket.io/admin-ui';
 import express from 'express';
 
 const app = express();
 
 const httpServer = http.createServer(app);
-const ioServer = new Server(httpServer);
+const ioServer = new Server(httpServer, {
+    cors: {
+        origin: ['https://admin.socket.io'],
+        credentials: true
+    }
+});
+
+instrument(ioServer, {
+    auth: false
+});
+
+const funPublicRooms = () => {
+    const {
+        sockets: {
+            adapter: { sids, rooms }
+        }
+    } = ioServer;
+    const publicRooms = [];
+    rooms.forEach((_, key) => {
+        if (sids.get(key) === undefined) {
+            publicRooms.push(key);
+        }
+    });
+    return publicRooms;
+};
+
+const countUsers = (roomName) => {
+    return ioServer.sockets.adapter.rooms.get(roomName)?.size;
+};
 
 ioServer.on('connection', (socket) => {
     socket['nickname'] = 'Anon';
@@ -17,11 +46,17 @@ ioServer.on('connection', (socket) => {
     socket.on('enter_room', (roomName) => {
         socket.join(roomName);
 
-        socket.to(roomName).emit('welcome', socket.nickname);
+        socket.to(roomName).emit('welcome', socket.nickname, countUsers(roomName));
+        ioServer.sockets.emit('room_change', funPublicRooms());
     });
 
     socket.on('disconnecting', () => {
-        socket.rooms.forEach((room) => socket.to(room).emit('bye', socket.nickname));
+        socket.rooms.forEach((room) =>
+            socket.to(room).emit('bye', socket.nickname, countUsers(room) - 1));
+    });
+
+    socket.on('disconnect', () => {
+        ioServer.sockets.emit('room_change', funPublicRooms());
     });
 
     socket.on('new_message', (msg, room) => {
